@@ -159,8 +159,24 @@ export const plugins = (name) => [
     babelHelpers: 'bundled',
     babelrc: false,
     exclude: 'node_modules/**',
-    rootMode: 'upward',
-    presets: [['@babel/preset-env', { targets: { node: true } }], '@babel/preset-typescript'],
+    presets: [
+      ['@babel/preset-env', { modules: process.env.NODE_ENV === 'production' ? false : 'auto' }],
+      ['@babel/react', { 'runtime': 'automatic' }],
+      '@babel/preset-typescript',
+    ],
+    plugins: [
+'babel-plugin-react-compiler',
+      '@babel/proposal-class-properties',
+      [
+        process.env.NODE_ENV === 'development'
+          ? '@babel/plugin-transform-react-jsx-self'
+          : '@babel/plugin-transform-react-jsx',
+        {
+          runtime: 'automatic',
+          useBuiltIns: true,
+        },
+      ],
+    ],
     shouldPrintComment: (comment) => /[#@]__PURE__/.exec(comment),
   }),
   commonjs(),
